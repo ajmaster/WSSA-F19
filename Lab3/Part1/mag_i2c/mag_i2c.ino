@@ -17,7 +17,7 @@ SemaphoreHandle_t sem_r, sem_w;
 
   
 static void ReadValues(void* arg){
-  //read magnetometer values
+  //read mag values
   while(1){
 
     xSemaphoreTake(sem_r, portMAX_DELAY);
@@ -31,7 +31,7 @@ static void ReadValues(void* arg){
 }
 
 static void PrintValues(void* arg){
-  //print magnetometer values to serial port
+  //print mag values to serial port
   while(1){
     xSemaphoreTake(sem_w, portMAX_DELAY);
     

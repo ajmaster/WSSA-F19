@@ -259,12 +259,9 @@ float LSM303C::readTempF()
 }
 
 
-// patrcia added 
-//status_t LSM303C::MAG_ReadReg(MAG_REG_t reg, uint8_t& data)
 #define MAG_WHO_AM_I_ID_VALUE 0x3D
 #define ACC_WHO_AM_I_ID_VALUE 0x41
 extern uint8_t mag_id;
-// patricia: this mag_id is used to do early test, should be removed later.
 status_t  LSM303C::mag_whoami()
 {
   uint8_t value;
@@ -882,12 +879,7 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   // Shift out 8-bit address & 8-bit data
   for(counter = 16; counter; counter--)
   {
-//    bitWrite(DATAPORTO, DATABIT, twoBytes & 0x8000);
-    
-    // Data is setup, so drop clock edge
-//    bitClear(CLKPORT, CLKBIT);
-//    bitSet(CLKPORT, CLKBIT);
-    // Shift off sent bit
+
     twoBytes <<= 1;
   }
   
@@ -895,19 +887,13 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   switch (chip)
   {
   case MAG:
-//    bitSet(CSPORT_MAG, CSBIT_MAG);
     break;
   case ACC:
-//    bitSet(CSPORT_XL, CSBIT_XL);
     break;
   }
  
   interrupts();
 
-  // Set data pin to input
-//  bitClear(DIR_REG, DATABIT);
-
-  // Is there a way to verify true success?
   return IMU_SUCCESS;
 }
 

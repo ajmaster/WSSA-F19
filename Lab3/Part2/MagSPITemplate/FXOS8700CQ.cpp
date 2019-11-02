@@ -114,9 +114,6 @@ void FXOS8700CQ::active() {
 //         it back in active mode
 //------------------------------------------------------------------------------
 void FXOS8700CQ::init() {
-// old style
-//SPI.setDataMode (SPI_MODE0);
-//SPI.setBitOrder (MSBFIRST);   // most significant bit first
 // newer 1 MHZ spi clock    
   SPI.beginTransaction (SPISettings (1000000, MSBFIRST, SPI_MODE0));  // 1 MHz clock, MSB first, mode 0
   standby();
