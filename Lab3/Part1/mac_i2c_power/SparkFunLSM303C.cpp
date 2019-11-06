@@ -43,6 +43,7 @@ status_t LSM303C::begin(InterfaceMode_t im, MAG_DO_t modr, MAG_FS_t mfs,
   {
     debug_println("Setting up SPI");
     SPI_WriteByte(ACC, ACC_CTRL4, 0b111);
+//    SPI_WriteByte(MAG, MAG_CTRL_REG3, _BV(2));
   }
   else
   {
@@ -112,12 +113,12 @@ float LSM303C::readAccelX()
 
     if ( ACC_ReadReg(ACC_OUT_X_H, valueH) )
     {
-      return IMU_HW_ERROR;
+	    return IMU_HW_ERROR;
     }
   
     if ( ACC_ReadReg(ACC_OUT_X_L, valueL) )
     {
-      return IMU_HW_ERROR;
+	    return IMU_HW_ERROR;
     }
   
     debug_println("Fresh raw data");
@@ -152,12 +153,12 @@ float LSM303C::readAccelY()
 
     if ( ACC_ReadReg(ACC_OUT_Y_H, valueH) )
     {
-      return IMU_HW_ERROR;
+	    return IMU_HW_ERROR;
     }
   
     if ( ACC_ReadReg(ACC_OUT_Y_L, valueL) )
     {
-      return IMU_HW_ERROR;
+	    return IMU_HW_ERROR;
     }
   
     debug_println("Fresh raw data");
@@ -192,12 +193,12 @@ float LSM303C::readAccelZ()
 
     if ( ACC_ReadReg(ACC_OUT_Z_H, valueH) )
     {
-      return IMU_HW_ERROR;
+	    return IMU_HW_ERROR;
     }
   
     if ( ACC_ReadReg(ACC_OUT_Z_L, valueL) )
     {
-      return IMU_HW_ERROR;
+	    return IMU_HW_ERROR;
     }
   
     debug_println("Fresh raw data");
@@ -224,7 +225,7 @@ float LSM303C::readTempC()
     return NAN;
   }
 
-  if( MAG_ReadReg(MAG_TEMP_OUT_L, valueL) )
+	if( MAG_ReadReg(MAG_TEMP_OUT_L, valueL) )
   {
     return NAN;
   }
@@ -446,7 +447,7 @@ status_t LSM303C::MAG_SetFullScale(MAG_FS_t val)
   }
 
   value &= ~MAG_FS_16_Ga; //mask
-  value |= val; 
+  value |= val;	
 
   if ( MAG_WriteReg(MAG_CTRL_REG2, value) )
   {
@@ -468,7 +469,7 @@ status_t LSM303C::MAG_BlockDataUpdate(MAG_BDU_t val)
 
 
   value &= ~MAG_BDU_ENABLE; //mask
-  value |= val;   
+  value |= val;		
 
   if ( MAG_WriteReg(MAG_CTRL_REG5, value) )
   {
@@ -500,9 +501,9 @@ status_t LSM303C::MAG_XY_AxOperativeMode(MAG_OMXY_t val)
   {
     return IMU_HW_ERROR;
   }
-  
+	
   value &= ~MAG_OMXY_ULTRA_HIGH_PERFORMANCE; //mask
-  value |= val; 
+  value |= val;	
 
   if ( MAG_WriteReg(MAG_CTRL_REG1, value) )
   {
@@ -523,7 +524,7 @@ status_t LSM303C::MAG_Z_AxOperativeMode(MAG_OMZ_t val)
   }
 
   value &= ~MAG_OMZ_ULTRA_HIGH_PERFORMANCE; //mask
-  value |= val; 
+  value |= val;	
 
   if ( MAG_WriteReg(MAG_CTRL_REG4, value) )
   {
@@ -546,7 +547,7 @@ status_t LSM303C::MAG_SetMode(MAG_MD_t val)
   }
 
   value &= ~MAG_MD_POWER_DOWN_2;
-  value |= val;   
+  value |= val;		
 
   if ( MAG_WriteReg(MAG_CTRL_REG3, value) )
   {
@@ -568,7 +569,7 @@ status_t LSM303C::ACC_SetFullScale(ACC_FS_t val)
   }
 
   value &= ~ACC_FS_8g;
-  value |= val; 
+  value |= val;	
 
 
   if ( ACC_WriteReg(ACC_CTRL4, value) )
@@ -590,7 +591,7 @@ status_t LSM303C::ACC_BlockDataUpdate(ACC_BDU_t val)
   }
 
   value &= ~ACC_BDU_ENABLE;
-  value |= val; 
+  value |= val;	
 
   if ( ACC_WriteReg(ACC_CTRL1, value) )
   {
@@ -612,7 +613,7 @@ status_t LSM303C::ACC_EnableAxis(uint8_t val)
   }
 
   value &= ~0x07;
-  value |= val; 
+  value |= val;	
 
   if ( ACC_WriteReg(ACC_CTRL1, value) )
   {
@@ -633,8 +634,8 @@ status_t LSM303C::ACC_SetODR(ACC_ODR_t val)
   }
 
   value &= ~ACC_ODR_MASK;
-  value |= val; 
-  
+  value |= val;	
+	
   if ( ACC_WriteReg(ACC_CTRL1, value) )
   {
     return IMU_HW_ERROR;
@@ -652,7 +653,7 @@ status_t LSM303C::MAG_TemperatureEN(MAG_TEMP_EN_t val){
   }
 
   value &= ~MAG_TEMP_EN_ENABLE; //mask
-  value |= val; 
+  value |= val;	
 
   if( MAG_WriteReg(MAG_CTRL_REG1, value) )
   {
@@ -867,7 +868,12 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   // Shift out 8-bit address & 8-bit data
   for(counter = 16; counter; counter--)
   {
-
+//    bitWrite(DATAPORTO, DATABIT, twoBytes & 0x8000);
+    
+    // Data is setup, so drop clock edge
+//    bitClear(CLKPORT, CLKBIT);
+//    bitSet(CLKPORT, CLKBIT);
+    // Shift off sent bit
     twoBytes <<= 1;
   }
   
@@ -875,8 +881,10 @@ status_t LSM303C::SPI_WriteByte(CHIP_t chip, uint8_t reg, uint8_t data)
   switch (chip)
   {
   case MAG:
+//    bitSet(CSPORT_MAG, CSBIT_MAG);
     break;
   case ACC:
+//    bitSet(CSPORT_XL, CSBIT_XL);
     break;
   }
  
@@ -986,36 +994,36 @@ status_t LSM303C::ACC_GetAccRaw(AxesRaw_t& buff)
 
   if ( ACC_ReadReg(ACC_OUT_X_H, valueH) )
   {
-    return IMU_HW_ERROR;
+	  return IMU_HW_ERROR;
   }
   
   if ( ACC_ReadReg(ACC_OUT_X_L, valueL) )
   {
-    return IMU_HW_ERROR;
+	  return IMU_HW_ERROR;
   }
   
   buff.xAxis = (int16_t)( (valueH << 8) | valueL );
   
   if ( ACC_ReadReg(ACC_OUT_Y_H, valueH) )
   {
-    return IMU_HW_ERROR;
+	  return IMU_HW_ERROR;
   }
   
   if ( ACC_ReadReg(ACC_OUT_Y_L, valueL) )
   {
-    return IMU_HW_ERROR;
+	  return IMU_HW_ERROR;
   }
   
   buff.yAxis = (int16_t)( (valueH << 8) | valueL );
   
   if ( ACC_ReadReg(ACC_OUT_Z_H, valueH) )
   {
-    return IMU_HW_ERROR;
+	  return IMU_HW_ERROR;
   }
   
   if ( ACC_ReadReg(ACC_OUT_Z_L, valueL) )
   {
-    return IMU_HW_ERROR;
+	  return IMU_HW_ERROR;
   }
 
   buff.zAxis = (int16_t)( (valueH << 8) | valueL ); 

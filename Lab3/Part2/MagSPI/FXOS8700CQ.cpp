@@ -19,14 +19,8 @@ FXOS8700CQ::FXOS8700CQ() {
 // writeReg(): Writes to a register
 //------------------------------------------------------------------------------
 void FXOS8700CQ::writeReg(uint8_t reg, uint8_t data) {
-//reg is the address of the register
-// we can use the spi_transfer call
-//void  spi_write_cmd(uint8_t address, uint8_t tx_data);
     spi_write_cmd( reg, data);
 #if 0
- //or use the re-implementation  in the following
-// write to spi bus 8 bit data to register reg 
-// pg 17 of pdf spec
     uint8_t address_bit7 = 0;
     uint8_t address = reg; 
     address_bit7 = address & (0x1 <<7) ;
@@ -114,13 +108,11 @@ void FXOS8700CQ::active() {
 //         it back in active mode
 //------------------------------------------------------------------------------
 void FXOS8700CQ::init() {
-// newer 1 MHZ spi clock    
+   
   SPI.beginTransaction (SPISettings (1000000, MSBFIRST, SPI_MODE0));  // 1 MHz clock, MSB first, mode 0
   standby();
-// or  spi_write_cmd( FXOS8700CQ_CTRL_REG1, 0x0);         // standby 
   spi_write_cmd( FXOS8700CQ_M_CTRL_REG1,((magOSR << 2)| 0x01)); // mag only mode, osr = 5 
   spi_write_cmd( FXOS8700CQ_CTRL_REG1, (magODR << 3) );     // assume default 0 to start, with changes here
-
   spi_write_cmd( FXOS8700CQ_CTRL_REG2, 0x00 ); // not enable sleep   1 << 2 ; wake up always
   active();
 }
@@ -133,12 +125,12 @@ void FXOS8700CQ::checkWhoAmI(void) {
   whoAmIData = readReg(FXOS8700CQ_WHO_AM_I);
   if( whoAmIData != FXOS8700CQ_WHO_AM_I_VAL )
   {
-      SerialUSB.println("ID error! The whoami read is not FXOS8700CQ_WHOAMI_VAL:");
+      SerialUSB.println("WHO_AM_I check has failed");
       SerialUSB.println(whoAmIData, 4);
   }
   else
   {
-      SerialUSB.println("ID correct! The whoami read is FXOS8700CQ_WHOAMI_VAL.");    
+      SerialUSB.println("WHO_AM_I check has passed");    
   }
 }
 

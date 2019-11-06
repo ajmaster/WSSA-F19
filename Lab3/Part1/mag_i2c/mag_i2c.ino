@@ -4,7 +4,7 @@
 #include "SparkFunIMU.h"
 #include "SparkFunLSM303C.h"
 #include "LSM303CTypes.h"
-#include <FreeRTOS_ARM.h>
+//#include <FreeRTOS_ARM.h>
 
 // #define DEBUG 1 in SparkFunLSM303C.h turns on debugging statements.
 // Redefine to 0 to turn them off.
