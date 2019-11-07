@@ -22,8 +22,8 @@ void setup() {
   // Initialize sensor
   sensor = FXOS8700CQ();
   sensor.init();
-  //10 ms delay
-  delay(10); 
+  //100 ms delay
+  delay(100); 
   
   // check WhoAmI
   sensor.checkWhoAmI();
@@ -31,13 +31,12 @@ void setup() {
 }
 
 void loop() {
-
-      sensor.readMagData();
+  sensor.readMagData();
       SerialUSB.println("Mag X Y Z:");
       SerialUSB.println(sensor.magData.x);
       SerialUSB.println(sensor.magData.y);
       SerialUSB.println(sensor.magData.z);
+      SerialUSB.println("");
       // 1000 ms delay
-      delay(1000); 
-    
+      delay(2000);
 }
